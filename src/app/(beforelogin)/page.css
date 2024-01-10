@@ -1,3 +1,22 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  background-color: #ffffff;
+  color: #000000;
+  margin: 0;
+}
+
+.layout {
+  max-width: 704px;
+  margin: 0 auto;
+  height: 100dvh;
+}
+
 .podex {
   display: flex;
   flex-direction: row;
@@ -15,6 +34,9 @@
   height: 130px;
   border-radius: 1rem;
   padding: 1rem;
+}
+.podex__number {
+  color: #999;
 }
 .podex__image {
   display: flex;

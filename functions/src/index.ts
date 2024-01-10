@@ -7,12 +7,14 @@ import * as cors from "cors";
 const pokdex = express();
 pokdex.use(cors({ origin: true }));
 pokdex.get("/pokdex", async (req, res) => {
+  const limit = req.query.limit || 20;
+  const offset = req.query.offset || 0;
+
   try {
     const listResponse = await axios.get(
-      `https://pokeapi.co/api/v2/pokemon/?limit=20&offset=0`,
+      `https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offset}`,
     );
     const pokemonList = listResponse.data.results;
-    console.log(pokemonList);
 
     const pokemonDetailsPromises = pokemonList.map(async (pokemon: any) => {
       const pokemonResponse = await axios.get(pokemon.url);
