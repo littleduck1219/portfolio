@@ -1,0 +1,45 @@
+.podex {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  max-width: 100%;
+  gap: 1rem;
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    width: 130px;
+    height: 130px;
+    border-radius: 1rem;
+    padding: 1rem;
+  }
+
+  &__image {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+
+  }
+
+  &__info {
+    max-width: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__seriesWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__series {
+
+  }
+}

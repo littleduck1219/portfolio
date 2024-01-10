@@ -1,38 +1,69 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
-
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
-
 import * as express from "express";
 import * as functions from "firebase-functions";
 import axios from "axios";
 import * as cors from "cors";
 
-const app = express();
-app.use(cors({ origin: true }));
-
-app.get("/", async (req, res) => {
-  const apiKey = "f185e4803318a03d7ea19e7ad238d5f738388f2b"; // API 키를 여기에 입력
+// pokedex api
+const pokdex = express();
+pokdex.use(cors({ origin: true }));
+pokdex.get("/pokdex", async (req, res) => {
   try {
-    const response = await axios.get(
-      `https://www.giantbomb.com/api/games/?api_key=${apiKey}&format=json&limit=10&offset=0`,
+    const listResponse = await axios.get(
+      `https://pokeapi.co/api/v2/pokemon/?limit=20&offset=0`,
     );
-    res.status(200).send(response.data.results);
+    const pokemonList = listResponse.data.results;
+    console.log(pokemonList);
+
+    const pokemonDetailsPromises = pokemonList.map(async (pokemon: any) => {
+      const pokemonResponse = await axios.get(pokemon.url);
+      const pokemonData = pokemonResponse.data;
+
+      // 종(species) 정보를 가져오기 위한 추가 요청
+      const speciesResponse = await axios.get(pokemonData.species.url);
+      const speciesData = speciesResponse.data;
+
+      // 한국어 이름 추출
+      const koreanNameEntry = speciesData.names.find(
+        (nameEntry: any) => nameEntry.language.name === "ko",
+      );
+      const koreanName = koreanNameEntry
+        ? koreanNameEntry.name
+        : pokemonData.name;
+
+      // 등장 시리즈 요청
+      const includeGame = pokemonData.game_indices.map(
+        (game: any) => game.version.name,
+      );
+
+      return {
+        id: pokemonData.id,
+        name: koreanName, // 한국어 이름 사용
+        sprites: pokemonData.sprites,
+        includeGame,
+      };
+    });
+
+    const pokemonDetails = await Promise.all(pokemonDetailsPromises);
+
+    res.status(200).send(pokemonDetails);
   } catch (error) {
     res.status(500).send(error);
   }
 });
 
-exports.fetchGames = functions.https.onRequest(app);
+exports.fetchPokdex = functions.https.onRequest(pokdex);
+
+// pokemon api
+// const pokemon = express();
+// pokemon.use(cors({ origin: true }));
+// pokemon.get("/pokemon", async (req, res) => {
+//   try {
+//     const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/1`);
+//     console.log(response);
+//     res.status(200).send(response.data);
+//   } catch (error) {
+//     res.status(500).send(error);
+//   }
+// });
+//
+// exports.fetchPokemon = functions.https.onRequest(pokemon);
