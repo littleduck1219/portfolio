@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-query";
 import Image from "next/image";
 import { useInView } from "react-intersection-observer";
+import Loader from "@/app/(beforelogin)/_components/Loader";
 
 interface Pokemon {
   id: number;
@@ -16,10 +17,12 @@ interface Pokemon {
   sprites: any;
 }
 
-export default function Home() {
+const Home = () => {
   const {
     data: pokedex,
     fetchNextPage,
+    isFetching,
+    isFetchingNextPage,
     hasNextPage,
     isError,
     error,
@@ -33,7 +36,7 @@ export default function Home() {
     queryKey: ["pokedex"],
     queryFn: async ({ pageParam = 0 }) => {
       const res = await fetch(
-        `https://us-central1-duckfolio-e57d0.cloudfunctions.net/fetchPokdex/pokdex?limit=20&offset=${pageParam}`,
+        `https://us-central1-duckfolio-e57d0.cloudfunctions.net/fetchPokedex/pokedex?limit=20&offset=${pageParam}`,
       );
       return res.json();
     },
@@ -61,12 +64,6 @@ export default function Home() {
     }
   }, [inView, hasNextPage]);
 
-  useEffect(() => {
-    if (isError) {
-      console.error("An error occurred: ", error);
-    }
-  }, [isError, error]);
-
   return (
     <main className="podex">
       {pokedex?.pages?.map((page: any) =>
@@ -76,7 +73,7 @@ export default function Home() {
               <p className="podex__number">No.{monster.id}</p>
               <div className="podex__image">
                 <Image
-                  src={monster.sprites.front_default}
+                  src={monster.sprites}
                   alt={"monster"}
                   width={100}
                   height={100}
@@ -89,8 +86,10 @@ export default function Home() {
           </div>
         )),
       )}
-      <div></div>
-      <div style={{ height: "50px" }} ref={ref} />
+      {(isFetching || hasNextPage || isFetchingNextPage) && <Loader />}
+      <div style={{ height: "5px" }} ref={ref} />
     </main>
   );
-}
+};
+
+export default Home;

@@ -4,9 +4,9 @@ import axios from "axios";
 import * as cors from "cors";
 
 // pokedex api
-const pokdex = express();
-pokdex.use(cors({ origin: true }));
-pokdex.get("/pokdex", async (req, res) => {
+const pokedex = express();
+pokedex.use(cors({ origin: true }));
+pokedex.get("/pokedex", async (req, res) => {
   const limit = req.query.limit || 20;
   const offset = req.query.offset || 0;
 
@@ -40,7 +40,7 @@ pokdex.get("/pokdex", async (req, res) => {
       return {
         id: pokemonData.id,
         name: koreanName, // 한국어 이름 사용
-        sprites: pokemonData.sprites,
+        sprites: pokemonData.sprites.other["official-artwork"].front_default,
         includeGame,
       };
     });
@@ -53,19 +53,4 @@ pokdex.get("/pokdex", async (req, res) => {
   }
 });
 
-exports.fetchPokdex = functions.https.onRequest(pokdex);
-
-// pokemon api
-// const pokemon = express();
-// pokemon.use(cors({ origin: true }));
-// pokemon.get("/pokemon", async (req, res) => {
-//   try {
-//     const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/1`);
-//     console.log(response);
-//     res.status(200).send(response.data);
-//   } catch (error) {
-//     res.status(500).send(error);
-//   }
-// });
-//
-// exports.fetchPokemon = functions.https.onRequest(pokemon);
+exports.fetchPokedex = functions.https.onRequest(pokedex);
