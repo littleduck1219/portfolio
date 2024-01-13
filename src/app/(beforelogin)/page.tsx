@@ -82,6 +82,7 @@ const Home = () => {
               <div className="podex__info">
                 <p>{monster.name}</p>
               </div>
+              <></>
             </div>
           </div>
         )),
